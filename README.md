@@ -1,11 +1,11 @@
 # Laravel Excel Decrypt
 
-A Laravel package for decrypting password-protected Excel files.
+A Laravel package for decrypting password-protected Excel files with support for file validation, size limits, and automatic cleanup.
 
 ## Installation
 
 ```bash
-composer require aeon/laravel-excel-decrypt
+composer require firdaus-aibm/laravel-excel-decrypt
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ composer require aeon/laravel-excel-decrypt
 ### Using the Service
 
 ```php
-use Aeon\LaravelExcelDecrypt\ExcelDecryptionService;
+use FirdausAibm\LaravelExcelDecrypt\ExcelDecryptionService;
 
 $service = app(ExcelDecryptionService::class);
 
@@ -22,19 +22,23 @@ $decryptedFilePath = $service->decryptFile('/path/to/encrypted.xlsx', 'password'
 
 // Clean up the decrypted file when done
 $service->cleanupDecryptedFile($decryptedFilePath);
-```
+
+// Or clean up all decrypted files
+$service->cleanupAllDecryptedFiles();
 
 ### Using the Facade
 
 ```php
-use Aeon\LaravelExcelDecrypt\Facades\ExcelDecrypt;
+use FirdausAibm\LaravelExcelDecrypt\Facades\ExcelDecrypt;
 
 // Decrypt a file
 $decryptedFilePath = ExcelDecrypt::decryptFile('/path/to/encrypted.xlsx', 'password');
 
 // Clean up the decrypted file when done
 ExcelDecrypt::cleanupDecryptedFile($decryptedFilePath);
-```
+
+// Or clean up all decrypted files
+ExcelDecrypt::cleanupAllDecryptedFiles();
 
 ## Configuration
 
@@ -48,7 +52,22 @@ This will create `config/excel-decrypt.php` with the following options:
 
 - `temp_directory`: Directory where decrypted files are temporarily stored
 - `auto_cleanup`: Whether to automatically clean up decrypted files
-- `max_file_size`: Maximum file size that can be decrypted
+- `max_file_size`: Maximum file size that can be decrypted (in bytes)
+
+## Error Handling
+
+The package provides custom exceptions for better error handling:
+
+```php
+use FirdausAibm\LaravelExcelDecrypt\Exceptions\ExcelDecryptException;
+
+try {
+    $decryptedPath = ExcelDecrypt::decryptFile($path, $password);
+} catch (ExcelDecryptException $e) {
+    // Handle specific decryption errors
+    echo $e->getMessage();
+}
+```
 
 ## License
 

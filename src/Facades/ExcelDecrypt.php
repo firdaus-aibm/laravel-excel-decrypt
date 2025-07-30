@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static string decryptFile(string $encryptedFilePath, string $password)
  * @method static void cleanupDecryptedFile(string $decryptedFilePath)
+ * @method static void cleanupAllDecryptedFiles()
+ * @method static string getTempDirectory()
  *
  * @see \FirdausAibm\LaravelExcelDecrypt\ExcelDecryptionService
  */
