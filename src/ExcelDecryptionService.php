@@ -2,7 +2,6 @@
 
 namespace FirdausAibm\LaravelExcelDecrypt;
 
-use Illuminate\Support\Facades\Storage;
 use FirdausAibm\LaravelExcelDecrypt\Exceptions\ExcelDecryptException;
 
 class ExcelDecryptionService
@@ -19,17 +18,24 @@ class ExcelDecryptionService
 
         // Check file size if configured
         $maxFileSize = config('excel-decrypt.max_file_size');
-        if ($maxFileSize && filesize($encryptedFilePath) > $maxFileSize) {
-            throw ExcelDecryptException::fileTooLarge(filesize($encryptedFilePath), $maxFileSize);
+        $size = filesize($encryptedFilePath);
+
+        if ($maxFileSize !== null && $maxFileSize > 0 && $size > $maxFileSize) {
+            throw ExcelDecryptException::fileTooLarge($size, $maxFileSize);
         }
 
         // Create a temporary file for the decrypted version
         $tempDir = config('excel-decrypt.temp_directory', storage_path('app/temp'));
-        if (!is_dir($tempDir)) {
-            mkdir($tempDir, 0755, true);
+
+        if (!is_dir($tempDir) && !mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+            throw ExcelDecryptException::tempDirectoryNotWritable($tempDir);
         }
 
-        $decryptedFilePath = $tempDir . '/' . uniqid('decrypted_') . '.xlsx';
+        if (!is_writable($tempDir)) {
+            throw ExcelDecryptException::tempDirectoryNotWritable($tempDir);
+        }
+
+        $decryptedFilePath = $tempDir . '/' . uniqid('decrypted_', true) . '.xlsx';
 
         try {
             // Use the wrapper to avoid naming conflicts
@@ -47,6 +53,30 @@ class ExcelDecryptionService
             }
             throw ExcelDecryptException::decryptionFailed($e->getMessage());
         }
+    }
+
+    /**
+     * Decrypt an Excel file, execute a callback with the decrypted path,
+     * and optionally clean up the decrypted file afterwards.
+     *
+     * @template T
+     * @param callable(string):T $callback
+     * @return T
+     */
+    public function withDecryptedFile(string $encryptedFilePath, string $password, callable $callback)
+    {
+        $path = $this->decryptFile($encryptedFilePath, $password);
+
+        try {
+            /** @var T */
+            $result = $callback($path);
+        } finally {
+            if (config('excel-decrypt.auto_cleanup', true)) {
+                $this->cleanupDecryptedFile($path);
+            }
+        }
+
+        return $result;
     }
 
     /**
