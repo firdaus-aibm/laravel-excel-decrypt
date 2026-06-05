@@ -69,6 +69,14 @@ try {
 }
 ```
 
+## Version Compatibility
+
+| Laravel | PHP | Testbench | Package |
+|---------|-----|-----------|---------|
+| 11.x    | ^8.2 | ^9.0 | ^1.0 |
+| 12.x    | ^8.2 | ^10.0 | ^1.0 |
+| 13.x    | ^8.2 | ^11.0 | ^1.0 |
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information. 
