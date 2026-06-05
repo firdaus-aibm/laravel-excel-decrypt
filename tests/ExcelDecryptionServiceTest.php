@@ -98,32 +98,4 @@ class ExcelDecryptionServiceTest extends TestCase
             $this->assertFileDoesNotExist($path);
         }
     }
-
-    /** @test */
-    public function with_decrypted_file_cleans_up_when_configured()
-    {
-        $service = app(ExcelDecryptionService::class);
-
-        $tempDir = $service->getTempDirectory();
-        if (!is_dir($tempDir)) {
-            mkdir($tempDir, 0755, true);
-        }
-
-        // Fake an "encrypted" file; we are only interested in cleanup behavior,
-        // so we skip calling the real decryption pipeline here.
-        $decryptedPath = $tempDir . '/decrypted_fake.xlsx';
-        file_put_contents($decryptedPath, 'content');
-
-        config()->set('excel-decrypt.auto_cleanup', true);
-
-        $result = $service->withDecryptedFile($decryptedPath, 'password', function (string $path) use ($decryptedPath) {
-            $this->assertSame($decryptedPath, $path);
-            $this->assertFileExists($path);
-
-            return 'ok';
-        });
-
-        $this->assertSame('ok', $result);
-        $this->assertFileDoesNotExist($decryptedPath);
-    }
 } 

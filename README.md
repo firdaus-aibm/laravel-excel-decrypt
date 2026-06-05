@@ -4,7 +4,7 @@ A Laravel package for decrypting password-protected Excel files with support for
 
 ## Requirements
 
-- Laravel 11.x or 12.x
+- Laravel 11.x, 12.x or 13.x
 - PHP 8.2 or higher
 
 ## Installation
@@ -105,6 +105,14 @@ try {
     report($e);
 }
 ```
+
+## Version Compatibility
+
+| Laravel | PHP | Testbench | Package |
+|---------|-----|-----------|---------|
+| 11.x    | ^8.2 | ^9.0 | ^1.0 |
+| 12.x    | ^8.2 | ^10.0 | ^1.0 |
+| 13.x    | ^8.3 | ^11.0 | ^1.0 |
 
 ## License
 

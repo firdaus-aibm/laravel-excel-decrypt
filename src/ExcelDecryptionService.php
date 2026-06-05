@@ -27,7 +27,7 @@ class ExcelDecryptionService
         // Create a temporary file for the decrypted version
         $tempDir = config('excel-decrypt.temp_directory', storage_path('app/temp'));
 
-        if (!is_dir($tempDir) && !mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+        if (!is_dir($tempDir) && !@mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
             throw ExcelDecryptException::tempDirectoryNotWritable($tempDir);
         }
 
