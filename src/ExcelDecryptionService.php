@@ -2,7 +2,6 @@
 
 namespace FirdausAibm\LaravelExcelDecrypt;
 
-use Illuminate\Support\Facades\Storage;
 use FirdausAibm\LaravelExcelDecrypt\Exceptions\ExcelDecryptException;
 
 class ExcelDecryptionService
