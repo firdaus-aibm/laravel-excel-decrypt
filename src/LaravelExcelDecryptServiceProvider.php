@@ -11,6 +11,11 @@ class LaravelExcelDecryptServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/excel-decrypt.php',
+            'excel-decrypt'
+        );
+
         $this->app->singleton(ExcelDecryptionService::class, function ($app) {
             return new ExcelDecryptionService();
         });
@@ -27,10 +32,5 @@ class LaravelExcelDecryptServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/excel-decrypt.php' => config_path('excel-decrypt.php'),
         ], 'excel-decrypt-config');
-
-        // Load config
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/excel-decrypt.php', 'excel-decrypt'
-        );
     }
 } 
