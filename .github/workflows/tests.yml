@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: 8.2
+            laravel: 11
+            testbench: 9
+          - php: 8.3
+            laravel: 11
+            testbench: 9
+          - php: 8.4
+            laravel: 11
+            testbench: 9
+          - php: 8.2
+            laravel: 12
+            testbench: 10
+          - php: 8.3
+            laravel: 12
+            testbench: 10
+          - php: 8.4
+            laravel: 12
+            testbench: 10
+          - php: 8.3
+            laravel: 13
+            testbench: 11
+          - php: 8.4
+            laravel: 13
+            testbench: 11
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, dom, fileinfo
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        env:
+          COMPOSER_POLICY_ADVISORIES_BLOCK: "false"
+        run: |
+          composer require "orchestra/testbench:^${{ matrix.testbench }}" --no-update --no-interaction
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run tests
+        run: vendor/bin/phpunit
